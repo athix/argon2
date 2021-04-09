@@ -45,6 +45,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rubocop',        '~> 1.7'
   s.add_development_dependency 'simplecov',      '~> 0.20'
   s.add_development_dependency 'simplecov-lcov', '~> 0.8'
+  s.add_development_dependency 'steep',          '~> 0.43.1'
 
   # Argon2 C Extension
   s.extensions << 'ext/argon2_wrap/extconf.rb'
