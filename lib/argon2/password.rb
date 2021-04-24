@@ -107,7 +107,7 @@ module Argon2
       # Supports 1 and argon2id formats.
       #
       def valid_hash?(digest)
-        /^\$argon2(id?|d).{,113}/ =~ digest
+        Argon2::HashFormat.valid_hash?(digest)
       end
 
       ##
@@ -203,41 +203,24 @@ module Argon2
       self.class.valid_hash?(digest)
     end
 
-    # FIXME: Reduce complexity/AbcSize
-    # rubocop:disable Metrics/AbcSize
-
     ##
     # Helper method to extract the various values from a digest into attributes.
     #
     def split_hash(digest)
-      # TODO: Is there a better way to explode the digest into attributes?
-      _, variant, version, config, salt, checksum = digest.split('$')
-      # Regex magic to extract the values for each setting
-      version = /v=(\d+)/.match(version)
-      t_cost  = /t=(\d+),/.match(config)
-      m_cost  = /m=(\d+),/.match(config)
-      p_cost  = /p=(\d+)/.match(config)
-
-      # Make sure none of the values are missing
-      raise Argon2::Errors::InvalidVersion if version.nil?
-      raise Argon2::Errors::InvalidTCost   if t_cost.nil?
-      raise Argon2::Errors::InvalidMCost   if m_cost.nil?
-      raise Argon2::Errors::InvalidPCost   if p_cost.nil?
-
+      hash_format = Argon2::HashFormat.new(digest)
       # Undo the 2^m_cost operation when encoding the hash to get the original
       # m_cost input back.
-      m_cost = Math.log2(m_cost[1].to_i).to_i
+      input_m_cost = Math.log2(hash_format.m_cost).to_i
 
       {
-        variant: variant.to_str,
-        version: version[1].to_i,
-        t_cost: t_cost[1].to_i,
-        m_cost: m_cost,
-        p_cost: p_cost[1].to_i,
-        salt: salt.to_str,
-        checksum: checksum.to_str
+        variant: hash_format.variant,
+        version: hash_format.version,
+        t_cost: hash_format.t_cost,
+        m_cost: input_m_cost,
+        p_cost: hash_format.p_cost,
+        salt: hash_format.salt,
+        checksum: hash_format.checksum
       }
     end
-    # rubocop:enable Metrics/AbcSize
   end
 end
