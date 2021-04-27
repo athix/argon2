@@ -143,6 +143,7 @@ module Argon2
     def initialize(digest)
       digest = digest.to_s
 
+      # FIXME: Behavior duplicated by HashFormat guard clause, remove here?
       raise Argon2::Errors::InvalidHash unless valid_hash?(digest)
 
       # Split the digest into its component pieces
