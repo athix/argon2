@@ -14,7 +14,7 @@ Metrics/PerceivedComplexity:
 Metrics/ParameterLists:
   Max: 5
   Exclude:
-    - 'lib/argon2/ffi_engine.rb'
+    - 'lib/argon2/engine.rb'
 
 Layout/LineLength:
   Max: 160
