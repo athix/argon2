@@ -91,7 +91,7 @@ module Argon2
         raise Argon2::Errors::InvalidMCost if m_cost < MIN_M_COST || m_cost > MAX_M_COST
         raise Argon2::Errors::InvalidPCost if p_cost < MIN_P_COST || p_cost > MAX_P_COST
 
-        salt = Engine.saltgen
+        salt = options[:salt_for_testing_purposes_only] || Engine.saltgen
         secret = options[:secret]
 
         Argon2::Password.new(
